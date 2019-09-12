@@ -7,7 +7,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 public class RequestReply {
-    public static void main(String[] args) throws NamingException, JMSException {
+    public static void main(String[] args) throws NamingException, JMSException, InterruptedException {
 
         InitialContext initialContext=new InitialContext();
         Queue inboundQueue= (Queue) initialContext.lookup("queue/inboundQueue");
@@ -17,13 +17,14 @@ public class RequestReply {
             JMSContext jmsContext = cf.createContext()
         ){
             JMSProducer producer=jmsContext.createProducer();
+           // producer.setTimeToLive(2000);
             //TemporaryQueue outboundQueue=jmsContext.createTemporaryQueue();
             TextMessage message=jmsContext.createTextMessage("THIS IS A REQUEST MESSAGE");
             message.setJMSReplyTo(outboundQueue);
             producer.send(inboundQueue,message);
-
+            //Thread.sleep(4000);
             JMSConsumer consumer=jmsContext.createConsumer(inboundQueue);
-            TextMessage msgReceived=(TextMessage) consumer.receive();
+            TextMessage msgReceived=(TextMessage) consumer.receive(5000);
             System.out.println(msgReceived.getText());
 
             JMSProducer replyProducer=jmsContext.createProducer();
