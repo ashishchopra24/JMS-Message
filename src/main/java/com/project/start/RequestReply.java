@@ -17,16 +17,16 @@ public class RequestReply {
             JMSContext jmsContext = cf.createContext()
         ){
             JMSProducer producer=jmsContext.createProducer();
-            producer.setTimeToLive(2000);
-            TextMessage message=jmsContext.createTextMessage("THIS IS A REQUEST MESSAGE");
-            producer.send(inboundQueue,message);
-            Thread.sleep(4000);
 
-            JMSConsumer consumer=jmsContext.createConsumer(inboundQueue);
-            TextMessage msgReceived=(TextMessage) consumer.receive(5000);
-            System.out.println(msgReceived);
+            MapMessage mapMessage=jmsContext.createMapMessage();
+            mapMessage.setBoolean("isSingle",true);
+            mapMessage.setString("Gender","Male");
 
-            System.out.println(jmsContext.createConsumer(expiryQueue).receiveBody(String.class));
+            producer.send(inboundQueue,mapMessage);
+
+
+            MapMessage messageReceived=(MapMessage) jmsContext.createConsumer(inboundQueue).receive();
+            System.out.println(messageReceived.getBoolean("isSingle")+" "+messageReceived.getString("Gender"));
 
 
         }
