@@ -26,7 +26,7 @@ public class RequestReply {
             TextMessage msgReceived=(TextMessage) consumer.receive(5000);
             System.out.println(msgReceived);
 
-            System.out.println(jmsContext.createConsumer(expiryQueue).receiveBody(String.class));
+            //System.out.println(jmsContext.createConsumer(expiryQueue).receiveBody(String.class));
 
 
         }
